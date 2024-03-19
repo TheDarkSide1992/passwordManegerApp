@@ -53,6 +53,16 @@ class Protection {
   ),
   cipher = AesGcm.with256bits();
 
+  Future<Key> createKey(String masterPassword) async {
+    final salt = generateSalt();
+    final secretKey = await kdfAlgorithm.deriveKeyFromPassword(
+        password: masterPassword, nonce: salt);
+    return _Key(secretKey, salt: salt);
+  }
+
+  List<int> generateSalt() =>
+      List<int>.generate(32, (i) => SecureRandom.safe.nextInt(256));
+
   Future<Key> recreateKey(EncryptedVault vault, String masterPassword) async {
     final secretKey = await kdfAlgorithm.deriveKeyFromPassword(
       password: masterPassword,
