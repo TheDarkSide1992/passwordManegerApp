@@ -24,6 +24,6 @@ class Storage{
     return EncryptedVault.fromJson(jsonDecode(json));
   }
 
-  delete() => _preferences.clear()
+  delete() => _preferences.clear();
 
 }
