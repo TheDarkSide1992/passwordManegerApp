@@ -13,7 +13,7 @@ class _Key extends Key {
   final SecretKey secretKey;
   final List<int> salt;
 
-  _Key(this.secretKey, {required this.salt})
+  _Key(this.secretKey, {required this.salt});
 
   @override
   void destroy() {
