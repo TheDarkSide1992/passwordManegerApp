@@ -3,6 +3,7 @@ import 'package:password_manager/infrastructure/storage.dart';
 import 'package:password_manager/models/credential.dart';
 
 import '../models/open_vault.dart';
+import 'failures.dart';
 
 class VaultApi  {
   final Storage _storage;
@@ -11,11 +12,12 @@ class VaultApi  {
   VaultApi({required storage, required Protection protector})
       : _protector = protector,
         _storage = storage;
+  bool get exists => _storage.exits;
 
   Future<OpenVault> create(
       String masterPassword) async {
     final key = await _protector.createKey(masterPassword);
-    final vault = OpenVault(Credential: <Credential>[], key: key);
+    final vault = OpenVault(credentials: <Credential>[], key: key);
     await _storage.save(await _protector.encrypt(vault));
     return vault;
   }
@@ -25,7 +27,7 @@ class VaultApi  {
     if (vault == null) throw VaultNotFoundFailure();
     final key = await _protector.recreateKey(vault, masterPassword);
     final credentials = await _protector.decrypt(vault, key);
-    return OpenVault(Credential: credentials, key: key);
+    return OpenVault(credentials: credentials, key: key);
   }
 
   Future<bool> save(OpenVault vault) async {
